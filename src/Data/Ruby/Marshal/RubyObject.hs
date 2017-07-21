@@ -1,5 +1,4 @@
 {-# LANGUAGE FlexibleInstances   #-}
-{-# LANGUAGE IncoherentInstances #-}
 {-# LANGUAGE LambdaCase          #-}
 
 --------------------------------------------------------------------
@@ -81,13 +80,13 @@ instance Rubyable Int where
     RFixnum x -> Just x
     _         -> Nothing
 
-instance Rubyable a => Rubyable (V.Vector a) where
+instance {-# OVERLAPPABLE #-} Rubyable a => Rubyable (V.Vector a) where
   toRuby = RArray . V.map toRuby
   fromRuby = \case
     RArray x -> V.mapM fromRuby x
     _        -> Nothing
 
-instance (Rubyable a, Rubyable b) => Rubyable (V.Vector (a, b)) where
+instance {-# OVERLAPPING #-} (Rubyable a, Rubyable b) => Rubyable (V.Vector (a, b)) where
   toRuby x = RHash $ V.map (toRuby *** toRuby) x
   fromRuby = \case
     RHash x -> V.mapM (\(k, v) -> (,) <$> fromRuby k <*> fromRuby v) x
@@ -123,13 +122,13 @@ instance Rubyable a => Rubyable (Maybe a) where
 
 -- array like
 
-instance Rubyable a => Rubyable [a] where
+instance {-# OVERLAPPABLE #-} Rubyable a => Rubyable [a] where
   toRuby = toRuby . V.fromList
   fromRuby x = V.toList <$> fromRuby x
 
 -- map like
 
-instance (Rubyable a, Rubyable b) => Rubyable [(a, b)] where
+instance {-# OVERLAPPING #-} (Rubyable a, Rubyable b) => Rubyable [(a, b)] where
   toRuby = toRuby . V.fromList
   fromRuby x = V.toList <$> fromRuby x
 
