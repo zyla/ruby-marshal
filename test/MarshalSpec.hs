@@ -7,6 +7,7 @@ import Test.Hspec
 
 import qualified Data.ByteString as BS
 import qualified Data.Vector     as V
+import Data.Text.Encoding (encodeUtf8)
 
 loadBin :: FilePath -> IO (Maybe RubyObject)
 loadBin path = do
@@ -89,6 +90,11 @@ spec = describe "load" $ do
     it "should parse" $ do
       object <- loadBin "test/bin/UTF_8_String.bin"
       object `shouldBe` Just (RIVar (RString "hello haskell", UTF_8))
+
+  context "when we have an UTF-8 string with non-ASCII characters" $
+    it "should parse" $ do
+      object <- loadBin "test/bin/UTF_8_non_ascii.bin"
+      object `shouldBe` Just (RIVar (RString (encodeUtf8 "Zażółć gęślą jaźń"), UTF_8))
 
   context "when we have 'hello haskell' in US-ASCII" $
     it "should parse" $ do

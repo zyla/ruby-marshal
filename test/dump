@@ -11,6 +11,7 @@ TYPES = {
   "Shift_JIS_String" => "hello haskell".force_encoding("Shift_JIS"),
   "US_ASCII_String"  => "hello haskell".force_encoding("US-ASCII"),
   "UTF_8_String"     => "hello haskell",
+  "UTF_8_non_ascii"  => "Zażółć gęślą jaźń",
   "bigArray"         => (-10000..10000).to_a,
   "boolArray"        => [true, false],
   "false"            => false,
